@@ -1,0 +1,54 @@
+CREATE DATABASE AYAssigment;
+USE AYAssigment; 
+CREATE TABLE News ( NewsID int primary key NOT NULL,
+					Title nvarchar(1000) NOT NULL,
+                    Content nvarchar(1000) NOT NULL,
+                    PublishedAt datetime(6) NOT NULL,
+                    CreatedBy nvarchar(100) NOT NULL,
+                    Url nvarchar(100),
+                    UrlToImage nvarchar(100));
+CREATE TABLE UserProfile ( UserId nvarchar(100) primary key NOT NULL,
+					FirstName nvarchar(100) NOT NULL,
+                    LastName nvarchar(100) NOT NULL,
+					Contact nvarchar(100) NOT NULL,
+					Email nvarchar(100) NOT NULL,
+                    CreatedAt datetime(6) NOT NULL);
+CREATE TABLE Reminders ( ReminderId int primary key NOT NULL,
+					Schedulle datetime(6) NOT NULL,
+                    NewsId int NOT NULL);
+CREATE TABLE Userpass ( UserId nvarchar(100) primary key NOT NULL,
+					Passwordd nvarchar(100) NOT NULL);
+INSERT INTO Userpass (UserID,Passwordd)
+VALUES ("Jack","pass@123"),("John","something#121"),("Kevin","test@123");
+INSERT INTO Reminders ( ReminderId,Schedulle,NewsId)
+VALUES (1,(STR_TO_DATE("04-12-2019 00:00:00","%m-%d-%Y %H:%i:%s")),101),(2,(STR_TO_DATE("10-12-2019 01:00:00","%m-%d-%Y %H:%i:%s")),102),(3,(STR_TO_DATE("10-12-2019 01:00:00","%m-%d-%Y %H:%i:%s")),104);
+INSERT INTO News (NewsID,Title,Content,PublishedAt,CreatedBy,Url,UrlToImage)
+VALUES (101,"IT industry in 2020","IT industry was facing disruptive changes in 2019. It is expected to have positive growth in 2020",(STR_TO_DATE("01-12-2019 01:00:00","%m-%d-%Y %H:%i:%s")),"Jack",NULL,NULL),
+		(102,"2020 FIFA U- The tournament will be held in India 17 Women World Cup","between 2 and 21 November 2020. It will mark the first time that India has hosted a FIFA women football tournament. chandrayaan2- spacecraft",(STR_TO_DATE("05-12-2019 01:00:00","%m-%d-%Y %H:%i:%s")),"Jack",NULL,NULL),
+		(103,"whatsoever1","whatsoever1a",(STR_TO_DATE("05-12-2019 01:00:00","%m-%d-%Y %H:%i:%s")),"Jack",NULL,NULL),
+		(104,"whatsoever2","whatsoever2a",(STR_TO_DATE("07-12-2019 01:00:00","%m-%d-%Y %H:%i:%s")),"Jack",NULL,NULL);
+INSERT INTO UserProfile (UserId,FirstName,LastName,Contact,Email,CreatedAt)
+VALUES ("Jack","JACKSSON","JAMES","80997","jack@ymail.com",(STR_TO_DATE("07-12-2019 00:00:00","%m-%d-%Y %H:%i:%s"))),
+		("John","JOHNSSON","DSOUZA","70695","john@ymail.com",(STR_TO_DATE("05-12-2019 00:00:00","%m-%d-%Y %H:%i:%s"))),
+        ("Kevin","KVIN","Lloyd","98766","kevin@ymail.com",(STR_TO_DATE("01-12-2019 00:00:00","%m-%d-%Y %H:%i:%s")));
+/* 1 Retreive all the user profiles joined on or after 10-Dec-2019 */
+SELECT * FROM UserProfile where (CreatedAt >= (STR_TO_DATE("10-12-2019 00:00:00","%m-%d-%Y %H:%i:%s")));
+/* 2 Retreive the details of user 'Jack' along with all the news created by him. */
+SELECT * FROM News Left JOIN UserProfile On News.CreatedBy=UserProfile.UserId where (UserId="jack");
+/* 3 Retreive all details of the user who created the News with newsId=103. */
+SELECT * FROM News where (NewsID=103);
+/* 4 Retreive the details of all the users who have not added any news yet. */
+SELECT * FROM News Right JOIN UserProfile On News.CreatedBy=UserProfile.UserId where (UserId!="jack");
+/* 5 Retreive the newsid and title of all the news having some reminder. */
+SELECT News.NewsID,News.Title FROM News Right JOIN Reminders On News.NewsID=Reminders.NewsId;
+/* 6 Retreive the total number of news added by each user. */
+SELECT News.CreatedBy, COUNT(*) FROM News GROUP BY News.CreatedBy ORDER BY 2 ;
+/* 7 Update the contact number of userId='John' to '9192939495'. */
+UPDATE UserProfile SET Contact ="9192939495" WHERE UserId ="John";
+/* 8 Update the title of the newsId=101 to 'IT industry growth can be seen in 2020'. */
+UPDATE News SET Title ="IT industry growth can be seen in 2020" WHERE newsId =101;
+/* 9 Remove all the reminders belonging to the news created by Jack.*/
+DELETE FROM Reminders WHERE NewsId=101 OR 102 OR 103 OR 104;
+/* 10 Write a query to set a reminder for a particular news (Use Reminder and News tables - insert statement) */
+INSERT INTO Reminders ( ReminderId,Schedulle,NewsId)
+VALUES (1,(STR_TO_DATE("04-12-2019 00:00:00","%m-%d-%Y %H:%i:%s")),101) 
