@@ -1,0 +1,103 @@
+create database cgiscandi
+
+use cgiscandi
+
+
+
+create table college(collegid int,collegename varchar(20),location varchar(20))
+
+desc college 
+
+alter table college drop column collegid
+alter table college add column cid int
+alter table college modify column collegename varchar(25)
+alter table college add constraint pkeycid primary key(cid)
+
+desc college 
+
+create table employee (empid varchar(10) primary key, 
+			empame varchar(20),
+			address varchar(20),
+                        cid int)
+
+
+alter table employee add constraint empfor foreign key(cid) references college(cid)
+
+alter table employee add column doj datetime(6)
+    
+alter table employee add constraint chkaddr check (address in('Denmark','Sweden','Norway'))
+
+desc employee
+
+desc college
+
+-- Inserting records 
+insert into college(cid,collegename,location) values (12,'AtoZ','Canada')
+insert into college(cid,collegename,location) values (13,'ZtoA','Denmark')
+insert into college(cid,collegename,location) values (2,'New university','London')
+insert into college(cid,collegename,location) values (1,'Old university','Norway')
+
+-- to view records
+
+select * from college
+
+desc employee
+
+-- to insert record in employee 
+
+insert into employee values("e10","Albin","Sweden",1,"2021-01-29")
+insert into employee values("e11","Sophie","Denmark",1,"2021-03-29")
+insert into employee values("e12","Tamas","Denmark",2,"2021-01-12")
+
+
+-- to view records
+
+select * from employee
+
+select * from college
+
+-- to view employee from 'Denmark'
+
+select * from employee where address='Denmark'
+
+-- to view empname and address whose cid is above 10
+
+select empame,address from employee where cid>10
+
+--  fetch employee and his collegename details from 2 tables
+
+
+select emp.* , coll.collegename from employee emp,college coll where  emp.cid=coll.cid
+
+
+--  fetch employee and his collegename details from 2 tables using join
+
+
+select emp.*, coll.collegename from employee emp join college coll on emp.cid=coll.cid
+'
+
+--  fetch employee details who comes from college 'Old University' using subquery
+
+select * from employee where cid in
+		(select cid from college where collegename='Old university')
+
+-- Update address to Sweden for the employee named Sophie
+
+update employee set address='Sweden' where empame='Sophie'
+
+-- View the details in sorting order
+
+select * from employee order by empame
+
+select * from college
+
+-- remove the records of cid = 13
+
+delete from college where cid=13 
+
+-- display the count of employee from  each address
+select count(*),address from employee group by address
+
+-- inserting record in employee table by fetching cid from college table
+
+insert into employee values("e132","mary","Denmark",(select cid from college where location='Norway') ,"2021-01-12")
